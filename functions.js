@@ -55,7 +55,29 @@ function drawFromPointToMouse(point) {
   let mapped = mapPoint(int);
 
   line(point.x, point.y, mapped.x, mapped.y);
-  // line(point.x, point.y, mouseX, mouseY);
+  ellipse(mapped.x, mapped.y, 20, 20);
+}
+
+function drawBetweenPoints(point1, point2) {
+  styleSecondary();
+
+  let int = findIntersection(
+    point1,
+    findAngleBetween(point1, point2)
+  );
+  point1 = mapPoint(point1);
+  point2 = mapPoint(point2);
+  let mapped = mapPoint(int);
+
+  line(point1.x, point1.y, mapped.x, mapped.y);
+  line(point1.x, point1.y, point2.x, point2.y);
+  line(point2.x, point2.y, mapped.x, mapped.y);
+  fill(255,0,0);
+  ellipse(point2.x, point2.y, 20, 20);
+  fill(0,255,0);
+  ellipse(point1.x, point1.y, 20, 20);
+  styleSecondary();
+
   ellipse(mapped.x, mapped.y, 20, 20);
 }
 
