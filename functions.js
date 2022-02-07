@@ -46,14 +46,16 @@ function mapPoint(point) {
 
 function drawFromPointToMouse(point) {
   styleSecondary();
-  point = mapPoint(point);
+
   let int = findIntersection(
-    createVector(mouseX, mouseY), 
-    mouseTheta(point)
+    point,
+    mouseTheta(mapPoint(point))
   );
+  point = mapPoint(point);
   let mapped = mapPoint(int);
+
   line(point.x, point.y, mapped.x, mapped.y);
-  line(point.x, point.y, mouseX, mouseY);
+  // line(point.x, point.y, mouseX, mouseY);
   ellipse(mapped.x, mapped.y, 20, 20);
 }
 

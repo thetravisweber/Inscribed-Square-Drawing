@@ -36,23 +36,21 @@ function luckyFunc(theta) {
 }
 
 
-function findIntersection(source, goal) {
-  let bestTheta = findClosestTheta(source, goal);
-
+function findIntersection(source, goalTheta) {
+  let bestTheta = findClosestTheta(source, goalTheta);
   return pointFromThetaFromOrigin(bestTheta);
 }
 
-function findClosestTheta(source, goal) {
+function findClosestTheta(source, goalTheta) {
   let closestOffset = TWO_PI;
   let bestThetaFromOrigin = 0;
   points.forEach( perimeterPoint => {
-    let thetaFromSource = findAngleBetween(source, perimeterPoint);
-    let difference = abs(thetaFromSource - goal);
+    let thetaFromSource = findAngleBetween(perimeterPoint, source);
+    let difference = abs(thetaFromSource - goalTheta);
     if (difference < closestOffset) {
       bestThetaFromOrigin = perimeterPoint.z;
       closestOffset = difference;
     }
   });
-
   return bestThetaFromOrigin;
 }
