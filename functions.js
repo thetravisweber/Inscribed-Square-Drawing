@@ -83,6 +83,9 @@ function drawBetweenPoints(point1, point2) {
   let mapped = mapPoint(int);
   
 
+  stroke(255);
+  strokeWeight(1);
+
   line(point1.x, point1.y, mapped.x, mapped.y);
   line(point1.x, point1.y, point2.x, point2.y);
   // line(point2.x, point2.y, mapped.x, mapped.y);

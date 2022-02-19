@@ -95,7 +95,7 @@ function findTwoClosestPoints(raySource, goalTheta) {
   for (const [index, perimeterPoint] of points.entries()) {
     let thetaFromRaySource = findAngleBetween(raySource, perimeterPoint);
     let difference = thetaFromRaySource - goalTheta;
-    console.log(index, thetaFromRaySource, difference);
+    // console.log(index, thetaFromRaySource, difference);
     if (abs(difference - prevDifference) > PI) {
       prevDifference += TWO_PI;
     }
@@ -109,5 +109,20 @@ function findTwoClosestPoints(raySource, goalTheta) {
   text(indecesOfCrossing, 50 , 50);
   let pointsToDraw = indecesOfCrossing.map(index => {return points[index]});
   drawCirclesAtPoints(pointsToDraw);
-  noLoop();
+  
+  for (const index of indecesOfCrossing) {
+    if (index == 0) {
+      continue;
+    }
+    let point = points[index];
+    let prevPoint = points[index-1];
+
+    mapped1 = mapPoint(point);
+    mapped2 = mapPoint(prevPoint);
+
+    stroke(255, 53, 184);
+    strokeWeight(2);
+    line(mapped1.x, mapped1.y, mapped2.x, mapped2.y);
+  }
+  // noLoop();
 }
