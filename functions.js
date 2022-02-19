@@ -37,6 +37,15 @@ function drawPoints(points) {
   endShape();
 }
 
+function drawCirclesAtPoints(points) {
+  fill(240,230,140);
+  points.forEach(point => {
+    mapped = mapPoint(point);
+    ellipse(mapped.x, mapped.y, 10, 10);
+  });
+}
+
+
 function mapPoint(point) {
   return createVector(
     map(point.x, minX, maxX, PADDING, width - PADDING),
@@ -65,20 +74,27 @@ function drawBetweenPoints(point1, point2) {
     point1,
     findAngleBetween(point1, point2)
   );
+  let int2 = findIntersection2(
+    point1,
+    findAngleBetween(point1, point2)
+  );
   point1 = mapPoint(point1);
   point2 = mapPoint(point2);
   let mapped = mapPoint(int);
+  
 
   line(point1.x, point1.y, mapped.x, mapped.y);
   line(point1.x, point1.y, point2.x, point2.y);
-  line(point2.x, point2.y, mapped.x, mapped.y);
+  // line(point2.x, point2.y, mapped.x, mapped.y);
   fill(255,0,0);
   ellipse(point2.x, point2.y, 20, 20);
   fill(0,255,0);
   ellipse(point1.x, point1.y, 20, 20);
   styleSecondary();
 
-  ellipse(mapped.x, mapped.y, 20, 20);
+  ellipse(mapped.x, mapped.y, 5, 5);
+  // let mapped2 = mapPoint(int2);
+  // ellipse(mapped2.x, mapped2.y, 5, 5);
 }
 
 function mouseTheta(point) {
@@ -119,4 +135,51 @@ function drawOrbital(withLine = false) {
     createVector(0, 0),
   );
   line(width/2, height/2, (width/2) + 200 * cos(ang), (height/2) + 200* sin(ang));
+}
+
+// no epsilon cushion, finds exact constant or uses max # of calls
+// find inverse f⁻¹(target) within a and b
+// returns random match if f(x) = target for multiple x values between a and b
+function inverseFunct(funct, target=0, a=-this.IntegrationInfinity, b=this.IntegrationInfinity, closest=NaN, calls=2**10) {
+  if (calls <= 0) {
+      return closest;
+  }
+
+  // f(a)
+  let fOfA = funct(a);
+  // f(b)
+  let fOfB = funct(b);
+  
+  let guess;
+  // if target is between fOfA and fOfB
+  if (this.between(target, fOfA, fOfB)) {
+      guess = this.map(target, fOfA, fOfB, a, b);
+  }
+  // if target is not between fOfA and fOfB
+  else {
+      let range = b - a;
+      let step = range / calls;
+      guess = a + step;
+  }
+
+  let result = funct(guess);
+
+  if (result === target) {
+      return guess;
+  }
+
+  let epsilon = Math.abs(target - result);
+  if (epsilon < funct(closest) || isNaN(closest)) {
+      closest = guess;
+  }
+
+  // if f(guess) between [f(a), target]
+  if (this.between(result, fOfA, target)) {
+      b = guess;
+  }
+  // if target between [guess, b]
+  else {
+      a = guess;
+  }
+  return this.inverseFunct(funct, target, a, b, closest, calls - 1);
 }

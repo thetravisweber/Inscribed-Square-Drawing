@@ -1,4 +1,4 @@
-const DRAW_DENSITY = 20;
+const DRAW_DENSITY = 16;
 const PADDING = 20;
 
 let points = [];
@@ -8,7 +8,9 @@ let minX = 0;
 let maxY = 0;
 let minY = 0;
 
-let mainFunc = circleFunc;
+let counter = 0;
+
+let mainFunc = luckyFunc;
 
 function setup() {
   createCanvas(400, 400);
@@ -28,17 +30,27 @@ function draw() {
   let h = maxY - minY;
   drawBetweenPoints(
     createVector(
-      w/2-w*noise(frameCount/100+1328723),
-      h/2-h*noise((frameCount+10000+349871489)/100)
+      w/2-w*noise(counter),
+      h/2-h*noise((counter+1000))
       ),
     createVector(
-      w/2-w*noise(frameCount/100),
-      h/2-h*noise((frameCount+10000)/100)
-    ));
+      (mouseX/ width - .5) * 6,
+      (mouseY / height - .5) * 6 
+    )
+    // createVector(
+    //   w/2-w*noise(frameCount/100),
+    //   h/2-h*noise((frameCount+10000)/100)
+    // )
+  );
   // drawOrbital();
 
   strokeWeight(4);
   point(width/2, height/2);
+}
+
+function mousePressed() {
+  counter++;
+  draw();
 }
 
 function circleFunc(theta) {
@@ -46,8 +58,7 @@ function circleFunc(theta) {
 }
 
 function luckyFunc(theta) {
-  return noise(sin(theta)*3);
-  // return 2 + sin(4 * theta);
+  return 2 + sin(4 * theta);
 }
 
 
@@ -70,7 +81,33 @@ function rayTrace(source, goalTheta) {
   return bestThetaFromOrigin;
 }
 
-// function rayTraceV2() {
-//   findTwoClosestPoints();
-//   return findThetaBetweenClosestPoints();
-// }
+function findIntersection2(source, goalTheta) {
+  let theta =  findTwoClosestPoints(source, goalTheta);
+  return true;
+  return pointFromThetaFromOrigin(theta);
+  return findThetaBetweenClosestPoints();
+}
+
+function findTwoClosestPoints(raySource, goalTheta) {
+  let indecesOfCrossing = [];
+  let lastPointTheta = findAngleBetween(raySource, points[points.length-1]);
+  let prevDifference = lastPointTheta - goalTheta;
+  for (const [index, perimeterPoint] of points.entries()) {
+    let thetaFromRaySource = findAngleBetween(raySource, perimeterPoint);
+    let difference = thetaFromRaySource - goalTheta;
+    console.log(index, thetaFromRaySource, difference);
+    if (abs(difference - prevDifference) > PI) {
+      prevDifference += TWO_PI;
+    }
+    if ((difference > 0 && prevDifference < 0)
+      || (difference < 0 && prevDifference > 0)
+    ) {
+      indecesOfCrossing.push(index);
+    }
+    prevDifference = difference;
+  }
+  text(indecesOfCrossing, 50 , 50);
+  let pointsToDraw = indecesOfCrossing.map(index => {return points[index]});
+  drawCirclesAtPoints(pointsToDraw);
+  noLoop();
+}
