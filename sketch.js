@@ -1,4 +1,4 @@
-const DRAW_DENSITY = 2000;
+const DRAW_DENSITY = 20;
 const PADDING = 20;
 
 let points = [];
@@ -8,7 +8,7 @@ let minX = 0;
 let maxY = 0;
 let minY = 0;
 
-let mainFunc = luckyFunc;
+let mainFunc = circleFunc;
 
 function setup() {
   createCanvas(400, 400);
@@ -41,6 +41,10 @@ function draw() {
   point(width/2, height/2);
 }
 
+function circleFunc(theta) {
+  return 1;
+}
+
 function luckyFunc(theta) {
   return noise(sin(theta)*3);
   // return 2 + sin(4 * theta);
@@ -48,11 +52,11 @@ function luckyFunc(theta) {
 
 
 function findIntersection(source, goalTheta) {
-  let bestTheta = findClosestTheta(source, goalTheta);
+  let bestTheta = rayTrace(source, goalTheta);
   return pointFromThetaFromOrigin(bestTheta);
 }
 
-function findClosestTheta(source, goalTheta) {
+function rayTrace(source, goalTheta) {
   let closestOffset = TWO_PI;
   let bestThetaFromOrigin = 0;
   points.forEach( perimeterPoint => {
@@ -65,3 +69,8 @@ function findClosestTheta(source, goalTheta) {
   });
   return bestThetaFromOrigin;
 }
+
+// function rayTraceV2() {
+//   findTwoClosestPoints();
+//   return findThetaBetweenClosestPoints();
+// }
